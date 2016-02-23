@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -29,8 +30,8 @@ public class App {
 
 	private JFrame frame;
 		
-	private DefaultListModel<String> llistaIMG = new DefaultListModel<String>();
-
+	private DefaultListModel<String> llistaIMG = new DefaultListModel<>();
+	
 	/**
 	 * Launch the application.
 	 */
@@ -116,6 +117,16 @@ public class App {
 		mida.gridx = 0;
 		mida.gridy = 3;
 		frame.getContentPane().add(llista, mida);
+		
+		JScrollPane scrollBar = new JScrollPane(llista);
+		scrollBar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		mida.weightx = 1;
+		mida.weighty = 1;
+		mida.gridwidth = 3;
+		mida.gridheight = 2;
+		mida.gridx = 0;
+		mida.gridy = 3;
+		frame.getContentPane().add(scrollBar, mida);
 	}
 
 	private void procesa(JButton descarrega, final JTextField url) {
@@ -126,14 +137,14 @@ public class App {
 				if(direccio.length()>0){
 					try {
 						Document doc=Jsoup.connect(direccio).get();
-						Elements img=doc.getElementsByTag("img");
+						Elements img=doc.select("img");
 						for(Element imatge:img){
 							int contador=0;
 							String nomImg=imatge.attr("src").substring(imatge.attr("src").lastIndexOf('/')+1);
 							llistaIMG.addElement(nomImg);
 							web = new URL(imatge.attr("src"));
 							InputStream entrada = web.openStream();
-							OutputStream sortida = new FileOutputStream("src/main/resources/img"+nomImg);
+							OutputStream sortida = new FileOutputStream(nomImg);
 							byte dades[]=new byte[1024];
 							while ((contador=entrada.read(dades))!=-1) {
 								sortida.write(dades, 0, contador);
