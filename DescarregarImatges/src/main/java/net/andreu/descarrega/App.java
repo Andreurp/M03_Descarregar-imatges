@@ -148,7 +148,6 @@ public class App {
 							byte dades[]=new byte[1024];
 							while ((contador=entrada.read(dades))!=-1) {
 								sortida.write(dades, 0, contador);
-								
 							}
 							sortida.flush();
 							sortida.close();
