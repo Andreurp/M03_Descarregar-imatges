@@ -133,19 +133,31 @@ public class App {
 		descarrega.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String direccio=url.getText();
-				URL web;
+				
 				if(direccio.length()>0){
 					try {
 						Document doc=Jsoup.connect(direccio).get();
 						Elements img=doc.select("img");
 						for(Element imatge:img){
+							String src=imatge.attr("src");
 							int contador=0;
+							if(!src.contains(direccio)){
+								if(direccio.endsWith("/") && src.startsWith("/")) {
+									direccio=direccio.substring(0, direccio.lastIndexOf('/')) + src;
+								}else if(!direccio.endsWith("/") && !src.startsWith("/")) {
+									direccio=direccio+"/"+src;
+								} else {
+									direccio=direccio+src;
+								}
+							}
+							
 							String nomImg=imatge.attr("src").substring(imatge.attr("src").lastIndexOf('/')+1);
 							llistaIMG.addElement(nomImg);
-							web = new URL(imatge.attr("src"));
+							
+							URL web = new URL(imatge.attr("src"));
 							InputStream entrada = web.openStream();
 							OutputStream sortida = new FileOutputStream(nomImg);
-							byte dades[]=new byte[1024];
+							byte dades[]=new byte[2048];
 							while ((contador=entrada.read(dades))!=-1) {
 								sortida.write(dades, 0, contador);
 							}
