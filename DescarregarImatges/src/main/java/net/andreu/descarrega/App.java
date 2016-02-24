@@ -122,7 +122,7 @@ public class App {
 		descarrega.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String direccio=url.getText();
-				URL web;
+				
 				if(direccio.length()>0){
 					try {
 						Document doc=Jsoup.connect(direccio).get();
@@ -134,13 +134,12 @@ public class App {
 							String nomImg=src.substring(src.lastIndexOf('/')+1);
 							llistaIMG.addElement(nomImg);
 							
-							web = new URL(src);
+							URL web = new URL(src);
 							InputStream entrada = web.openStream();
 							OutputStream sortida = new FileOutputStream(nomImg);
 							byte dades[]=new byte[1024];
 							while ((contador=entrada.read(dades))!=-1) {
 								sortida.write(dades, 0, contador);
-								
 							}
 							sortida.flush();
 							sortida.close();
