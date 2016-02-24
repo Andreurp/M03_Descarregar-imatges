@@ -17,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -30,8 +29,8 @@ public class App {
 
 	private JFrame frame;
 		
-	private DefaultListModel<String> llistaIMG = new DefaultListModel<>();
-	
+	private DefaultListModel<String> llistaIMG = new DefaultListModel<String>();
+
 	/**
 	 * Launch the application.
 	 */
@@ -117,49 +116,31 @@ public class App {
 		mida.gridx = 0;
 		mida.gridy = 3;
 		frame.getContentPane().add(llista, mida);
-		
-		JScrollPane scrollBar = new JScrollPane(llista);
-		scrollBar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		mida.weightx = 1;
-		mida.weighty = 1;
-		mida.gridwidth = 3;
-		mida.gridheight = 2;
-		mida.gridx = 0;
-		mida.gridy = 3;
-		frame.getContentPane().add(scrollBar, mida);
 	}
 
 	private void procesa(JButton descarrega, final JTextField url) {
 		descarrega.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String direccio=url.getText();
-				
+				URL web;
 				if(direccio.length()>0){
 					try {
 						Document doc=Jsoup.connect(direccio).get();
-						Elements img=doc.select("img");
+						Elements img=doc.getElementsByTag("img");
 						for(Element imatge:img){
 							String src=imatge.attr("src");
 							int contador=0;
-							if(!src.contains(direccio)){
-								if(direccio.endsWith("/") && src.startsWith("/")) {
-									direccio=direccio.substring(0, direccio.lastIndexOf('/')) + src;
-								}else if(!direccio.endsWith("/") && !src.startsWith("/")) {
-									direccio=direccio+"/"+src;
-								} else {
-									direccio=direccio+src;
-								}
-							}
 							
-							String nomImg=imatge.attr("src").substring(imatge.attr("src").lastIndexOf('/')+1);
+							String nomImg=src.substring(src.lastIndexOf('/')+1);
 							llistaIMG.addElement(nomImg);
 							
-							URL web = new URL(imatge.attr("src"));
+							web = new URL(src);
 							InputStream entrada = web.openStream();
 							OutputStream sortida = new FileOutputStream(nomImg);
-							byte dades[]=new byte[2048];
+							byte dades[]=new byte[1024];
 							while ((contador=entrada.read(dades))!=-1) {
 								sortida.write(dades, 0, contador);
+								
 							}
 							sortida.flush();
 							sortida.close();
